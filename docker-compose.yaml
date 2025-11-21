@@ -1,0 +1,21 @@
+services:
+  transcribe:
+    build:
+      dockerfile: Dockerfile
+    container_name: whisper-container
+    entrypoint: ["python3", "main.py"]  # Main run
+    #command: "sleep infinity" # Keep alive for debug
+    volumes:
+      - ./data/input_audio:/home/main/input_audio
+      - ./data/transcripts:/home/main/transcripts
+      - ./data/logs:/home/main/logs
+      #TODO: vvv Change user to run in Open-Shift. Docker file user will also need to change. vvv
+      - ./data/model_cache:/root/.cache/whisper
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
